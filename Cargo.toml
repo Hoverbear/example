@@ -1,0 +1,17 @@
+[package]
+
+name = "common"
+version = "0.1.0"
+authors = [ "Andrew Hobden <andrew@hoverbear.org>", ]
+
+[dependencies]
+iron = "*"
+urlencoded = "*"
+logger = "*"
+router = "*"
+mount = "*"
+persistent = "*"
+staticfile = "*"
+session = "*"
+cookie = "*"
+bodyparser = "*"
