@@ -15,3 +15,6 @@ staticfile = "*"
 session = "*"
 cookie = "*"
 bodyparser = "*"
+diesel = { version = "*", features = ['sqlite'] }
+r2d2 = "*"
+r2d2-diesel = { version = "*", features = ['sqlite'] }

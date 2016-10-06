@@ -1,47 +1,36 @@
+// Related to Iron itself.
 extern crate iron;
 extern crate router;
 extern crate staticfile;
 extern crate mount;
 extern crate logger;
 
+// Related to database
+extern crate diesel;
+extern crate r2d2;
+extern crate r2d2_diesel;
+
 mod api;
 
 use api::Api;
 
 use iron::{Iron, Chain};
-use router::Router;
-use staticfile::Static;
-use mount::Mount;
 use logger::Logger;
 
-use std::path::Path;
-
+// Use memory for now, non-persistent.
+const DATABASE_CONNECTION_STRING: &'static str = ":memory:";
 
 fn main() {
-    //
-    let api_mount = {
-        let mut mount = Mount::new();
-        mount.mount("/api/", Api::new());
+    // Initialize the chain with the API.
+    let api = Api::new(DATABASE_CONNECTION_STRING);
+    let mut chain = Chain::new(api);
 
-        mount
-    };
-
-    let router = {
-        let mut router = Router::new();
-        // Serve static assets from `site/` on bare routes.
-        router.get("/", Static::new(Path::new("site/")), "site");
-        // Serve from the API on anything on the `/api` routes.
-        router.any("/api", api_mount, "api");
-
-        router
-    };
-
-    // Initialize logging.
-    let mut chain = Chain::new(router);
+    // Initialize logging with default output.
     let (logger_before, logger_after) = Logger::new(None);
     chain.link_before(logger_before);
     chain.link_after(logger_after);
 
+    // Begin listening and output something useful for the user.
     match Iron::new(chain).http("localhost:3000") {
         Result::Ok(listening) => println!("{:?}", listening),
         Result::Err(err) => panic!("{:?}", err),
