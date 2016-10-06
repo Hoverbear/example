@@ -1,0 +1,3 @@
+CREATE TABLE tests (
+  id INTEGER PRIMARY KEY
+)

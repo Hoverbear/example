@@ -16,5 +16,8 @@ session = "*"
 cookie = "*"
 bodyparser = "*"
 diesel = { version = "*", features = ['sqlite'] }
+diesel_codegen = { version = "*", features = ["sqlite"] }
 r2d2 = "*"
 r2d2-diesel = { version = "*", features = ['sqlite'] }
+dotenv = "*"
+dotenv_macros = "*"

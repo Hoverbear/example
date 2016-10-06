@@ -2,9 +2,15 @@ use iron::{Handler, Request, Response, IronResult, status};
 use router::Router;
 
 use diesel::sqlite::SqliteConnection;
+use diesel::insert;
 
 use r2d2_diesel::ConnectionManager;
 use r2d2;
+
+use models::test::Test;
+use schema::tests;
+use diesel::prelude::*;
+use std::ops::DerefMut;
 
 pub struct Api {
     router: Router,
@@ -12,11 +18,19 @@ pub struct Api {
 }
 
 impl Api {
-    pub fn new(database_connection_string: &str) -> Api {
+    pub fn new(database_url: String) -> Api {
         // Set up a pool of sqlite connections.
         let config = r2d2::Config::default();
-        let manager = ConnectionManager::<SqliteConnection>::new(database_connection_string);
+        let manager = ConnectionManager::<SqliteConnection>::new(database_url);
         let pool = r2d2::Pool::new(config, manager).expect("Failed to create pool.");
+
+        // TODO: Make this routes
+        use schema::tests::dsl::*;
+        let mut the_test_connection = pool.get().unwrap();
+        let the_test = Test { id: 1 };
+        insert(&the_test)
+            .into(tests)
+            .execute(the_test_connection.deref_mut());
 
         Api {
             router: Router::new(),
